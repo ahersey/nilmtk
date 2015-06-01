@@ -201,15 +201,16 @@ def download_dataport(database_username, database_password,
 
             # get buildings present in this table
             sql_query = ('SELECT DISTINCT dataid' + 
-                         ' FROM "' + database_schema + '".' + database_table + 
+                         ' FROM university.metadata' + 
+                         ' WHERE egauge_min_time IS NOT NULL' +
                          ' ORDER BY dataid')
             buildings_in_table = pd.read_sql(sql_query, conn)['dataid'].tolist()
 
             if building_id in buildings_in_table:
                 # get first and last timestamps for this house in this table
-                sql_query = ('SELECT MIN(localminute) AS minlocalminute,' + 
-                             ' MAX(localminute) AS maxlocalminute' + 
-                             ' FROM "' + database_schema + '".' + database_table + 
+                sql_query = ('SELECT MIN(egauge_min_time) AS minlocalminute,' + 
+                             ' MAX(egauge_max_time) AS maxlocalminute' + 
+                             ' FROM university.metadata' + 
                              ' WHERE dataid=' + str(building_id))
                 range = pd.read_sql(sql_query, conn)
                 first_timestamp_in_table = range['minlocalminute'][0]
